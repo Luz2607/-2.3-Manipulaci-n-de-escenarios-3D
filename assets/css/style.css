@@ -1,0 +1,251 @@
+/* ===== Tema base ===== */
+:root{ --bg-0:#0b0f17; --bg-1:#0f1522; --stroke:rgba(255,255,255,.08); --muted:#8c98a5; }
+html[data-bs-theme="dark"] body{
+  background: radial-gradient(1200px 700px at 10% -10%, #151b28 0%, var(--bg-0) 35%) fixed;
+  color:#e9edf2;
+}
+.text-secondary{ color: var(--muted) !important; }
+
+/* Navbar / Footer glass */
+.nav-glass,.footer-glass{
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--stroke);
+}
+
+/* Hero & containers */
+.page-wrap{ max-width: 1200px; margin-inline: auto; }
+.hero{
+  margin-top: 80px;
+  margin-bottom: 10px;
+  border:1px solid var(--stroke);
+  background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+  border-radius: 16px; padding: 18px;
+}
+.cta-glass{
+  border:1px solid var(--stroke);
+  background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  border-radius: 14px;
+}
+
+/* ===== Fuente “más chida” ===== */
+body.minimal-dark {
+  font-family: "Chakra Petch", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  background-color: #0f0f0f;
+  color: #e0e0e0;
+  transition: background-color 0.5s ease;
+}
+.navbar-brand,
+.label .title { font-weight: 700; letter-spacing: .04em; }
+
+/* ===== Cards (flip original, más grandes, 2 por fila) ===== */
+.flip-card{
+  background-color: transparent;
+  width: 520px;   /* GRANDE */
+  height: 320px;  /* GRANDE */
+  perspective: 1000px;
+  color: #fff;
+  border-radius: 1rem;
+  transition: transform .2s ease;
+}
+@media (max-width: 575.98px){ .flip-card{ width: 100%; height: 260px; } }
+
+.flip-card-inner{
+  position: relative; width: 100%; height: 100%;
+  text-align: center; transition: transform .8s; transform-style: preserve-3d;
+  border-radius: 1rem;
+}
+.flip-card:hover .flip-card-inner{ transform: rotateY(180deg); }
+
+/* Glow sutil al pasar */
+.card-glow:hover{ transform: translateY(-2px); }
+.card-glow{ box-shadow: 0 12px 24px rgba(0,0,0,.35); }
+.card-glow:hover{ box-shadow: 0 20px 40px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.1) inset; }
+
+.flip-card-front,.flip-card-back{
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  -webkit-backface-visibility: hidden; backface-visibility: hidden;
+  border-radius: 1rem; overflow: hidden;
+  background: #171717;
+  box-shadow:
+    rgba(0,0,0,0.4) 0 2px 2px,
+    rgba(0,0,0,0.3) 0 7px 13px -3px,
+    rgba(0,0,0,0.2) 0 -1px 0 inset;
+}
+.flip-card-back{ transform: rotateY(180deg); }
+
+/* Imagen directa + velo (frente) */
+.flip-card-front{
+  background-size: cover;
+  background-position: center;
+}
+.flip-card-front::after{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,.88) 100%);
+  pointer-events: none;
+}
+
+/* ===== Reverso con vista previa ===== */
+.preview-embed{
+  position: absolute; inset: 0;
+  display: block;
+  pointer-events: none; /* que no capture clics, solo preview */
+  opacity: .9;
+  filter: saturate(1) contrast(1.05) brightness(.95);
+}
+.preview-embed iframe{
+  width: 100%; height: 100%; border: 0;
+  background: #000;
+}
+
+/* Texto */
+.label{
+  position: relative; z-index:1; width:100%;
+  text-align:left; padding:0 22px 18px; margin-top:auto;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 10px;
+  margin: 0 18px 16px;
+  backdrop-filter: blur(6px);
+}
+.label .title{ font-weight:800; letter-spacing:.08em; font-size:1.25rem; }
+.label .subtitle{ color:#c6d0e0; opacity:.95; font-size:1rem; margin-top:2px; }
+.card-link{ text-decoration:none; }
+
+/* ===== Splash & Loader ===== */
+.splash-full{ position:fixed; inset:0; z-index:9999; background:#000 url('../img/gral.png') center/cover no-repeat; }
+.overlay{ position:fixed; inset:0; z-index:9998; }
+.fill-center{ display:grid; place-items:center; }
+.d-none{ display:none !important; }
+
+/* Loader UIverse */
+.loader { --cell-size:52px; --cell-spacing:1px; --cells:3;
+  --total-size: calc(var(--cells) * (var(--cell-size) + 2 * var(--cell-spacing)));
+  display:flex; flex-wrap:wrap; width:var(--total-size); height:var(--total-size); }
+.cell{ flex:0 0 var(--cell-size); margin:var(--cell-spacing); background:transparent; border-radius:4px; animation:1.5s ripple ease infinite; }
+.cell.d-1{animation-delay:100ms}.cell.d-2{animation-delay:200ms}.cell.d-3{animation-delay:300ms}.cell.d-4{animation-delay:400ms}
+.cell:nth-child(1){--cell-color:#00FF87}.cell:nth-child(2){--cell-color:#0CFD95}.cell:nth-child(3){--cell-color:#17FBA2}
+.cell:nth-child(4){--cell-color:#23F9B2}.cell:nth-child(5){--cell-color:#30F7C3}.cell:nth-child(6){--cell-color:#3DF5D4}
+.cell:nth-child(7){--cell-color:#45F4DE}.cell:nth-child(8){--cell-color:#53F1F0}.cell:nth-child(9){--cell-color:#60EFFF}
+@keyframes ripple{0%{background:transparent}30%{background:var(--cell-color)}60%{background:transparent}100%{background:transparent}}
+
+/* ===== Fondo animado tipo "rain" en TODO el sitio ===== */
+body.rain { position: relative; min-height: 100dvh; background: #000; }
+
+/* Capa base columnas animadas */
+body.rain::before{
+  content:"";
+  position: fixed; inset: 0; z-index: -2;
+  --c:#09f;
+  background-color:#000;
+  background-image:
+    radial-gradient(4px 100px at 0px 235px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 235px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 117.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 252px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 252px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 126px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 150px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 150px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 75px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 253px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 253px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 126.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 204px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 204px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 102px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 134px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 134px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 67px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 179px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 179px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 89.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 299px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 299px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 149.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 215px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 215px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 107.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 281px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 281px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 140.5px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 158px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 158px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 79px, var(--c) 100%, #0000 150%),
+    radial-gradient(4px 100px at 0px 210px, var(--c), #0000),
+    radial-gradient(4px 100px at 300px 210px, var(--c), #0000),
+    radial-gradient(1.5px 1.5px at 150px 105px, var(--c) 100%, #0000 150%);
+  background-size:
+    300px 235px,300px 235px,300px 235px,
+    300px 252px,300px 252px,300px 252px,
+    300px 150px,300px 150px,300px 150px,
+    300px 253px,300px 253px,300px 253px,
+    300px 204px,300px 204px,300px 204px,
+    300px 134px,300px 134px,300px 134px,
+    300px 179px,300px 179px,300px 179px,
+    300px 299px,300px 299px,300px 299px,
+    300px 215px,300px 215px,300px 215px,
+    300px 281px,300px 281px,300px 281px,
+    300px 158px,300px 158px,300px 158px,
+    300px 210px,300px 210px,300px 210px;
+  animation: rain-move 150s linear infinite;
+}
+@keyframes rain-move{
+  0%{
+    background-position:
+      0px 220px, 3px 220px, 151.5px 337.5px,
+      25px 24px, 28px 24px, 176.5px 150px,
+      50px 16px, 53px 16px, 201.5px 91px,
+      75px 224px, 78px 224px, 226.5px 350.5px,
+      100px 19px, 103px 19px, 251.5px 121px,
+      125px 120px, 128px 120px, 276.5px 187px,
+      150px 31px, 153px 31px, 301.5px 120.5px,
+      175px 235px, 178px 235px, 326.5px 384.5px,
+      200px 121px, 203px 121px, 351.5px 228.5px,
+      225px 224px, 228px 224px, 376.5px 364.5px,
+      250px 26px, 253px 26px, 401.5px 105px,
+      275px 75px, 278px 75px, 426.5px 180px;
+  }
+  100%{
+    background-position:
+      0px 6800px, 3px 6800px, 151.5px 6917.5px,
+      25px 13632px, 28px 13632px, 176.5px 13758px,
+      50px 5416px, 53px 5416px, 201.5px 5491px,
+      75px 17175px, 78px 17175px, 226.5px 17301.5px,
+      100px 5119px, 103px 5119px, 251.5px 5221px,
+      125px 8428px, 128px 8428px, 276.5px 8495px,
+      150px 9876px, 153px 9876px, 301.5px 9965.5px,
+      175px 13391px, 178px 13391px, 326.5px 13540.5px,
+      200px 14741px, 203px 14741px, 351.5px 14848.5px,
+      225px 18770px, 228px 18770px, 376.5px 18910.5px,
+      250px 5082px, 253px 5082px, 401.5px 5161px,
+      275px 6375px, 278px 6375px, 426.5px 6480px;
+  }
+}
+
+/* Capa granular con hue-rotate */
+body.rain::after{
+  content:"";
+  position: fixed; inset: 0; z-index: -1;
+  background-image: radial-gradient(circle at 50% 50%, #0000 0, #0000 2px, hsl(0 0% 4%) 2px);
+  background-size: 8px 8px;
+  --f: blur(1em) brightness(6);
+  animation: rain-grain 10s linear infinite;
+}
+@keyframes rain-grain{
+  0% { backdrop-filter: var(--f) hue-rotate(0deg);    }
+  100%{ backdrop-filter: var(--f) hue-rotate(360deg); }
+}
+
+/* Botones & transiciones */
+.btn-outline-light { border-color: #444; color: #ccc; transition: all 0.3s ease; }
+.btn-outline-light:hover { background-color: #222; color: #fff; }
+.btn-primary { background-color: #00ffff; border: none; color: #000; transition: background-color 0.3s ease; }
+.btn-primary:hover { background-color: #00cccc; }
+
+.page-wrap { animation: fadeInUp 1s ease forwards; opacity: 0; }
+@keyframes fadeInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+/* Loader animation */
+.loader .cell { width: 12px; height: 12px; margin: 2px; background: #00ffff; animation: pulse 1.2s infinite ease-in-out; }
+@keyframes pulse { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }

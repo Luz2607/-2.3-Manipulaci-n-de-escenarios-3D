@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>three.js webgl - map controls</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <link type="text/css" rel="stylesheet" href="main.css">
+  <style>
+    body {
+      background-color: #ccc;
+      color: #000;
+      margin: 0;
+      overflow: hidden;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    }
+    a { color: #f00; }
+  </style>
+</head>
+
+<body>
+<div id="info"
+     style="position:fixed;top:10px;left:50%;transform:translateX(-50%);
+            text-align:center;width:max-content;z-index:1000;">
+  <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - map controls
+</div>
+
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./build/three.module.js",
+        "three/addons/": "./jsm/"
+      }
+    }
+  </script>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
