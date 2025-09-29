@@ -113,11 +113,7 @@ body.minimal-dark {
 .card-link{ text-decoration:none; }
 
 /* ===== Splash & Loader ===== */
-.splash-full{
-  position:fixed; inset:0; z-index:9999;
-  background:#000; /* sin imagen aquí */
-}
-
+.splash-full{ position:fixed; inset:0; z-index:9999; background:#000 url('../img/gral.png') center/cover no-repeat; }
 .overlay{ position:fixed; inset:0; z-index:9998; }
 .fill-center{ display:grid; place-items:center; }
 .d-none{ display:none !important; }

@@ -1,4 +1,4 @@
-// assets/js/main.js
+// assets/js/main.js  (sin loader)
 
 (() => {
   // =============== Helpers ===============
@@ -7,98 +7,70 @@
   const on = (el, ev, fn, opts) => el && el.addEventListener(ev, fn, opts);
 
   // =============== DOM refs ===============
-  const yearEl = $('#year');
-  const splash = $('#splash');
-  const loader = $('#loader');
-  const app    = $('#app');
+  const yearEl   = $('#year');
+  const splash   = $('#splash');
+  const app      = $('#app');
   const btnTheme = $('#btnTheme');
   const btnOpenAll = $('#btnOpenAll');
-  const navbar = document.querySelector('nav.navbar');
+  const navbar   = document.querySelector('nav.navbar');
 
   // =============== Año footer ===============
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // =============== Duraciones ===============
-  const SPLASH_MS = 1400;
-  const LOADER_MS = 1100;
-
-  // =============== Imagen de inicio SOLO al recargar (1ra vez por pestaña) ===============
-  // Ajusta la ruta de la imagen aquí:
-  const SPLASH_IMG = 'assets/img/general.png';
-  // Se mostrará ÚNICAMENTE si la navegación es "reload" y aún no se mostró en esta sesión (pestaña).
-  const RELOAD_FLAG = 'ui.reloadSplashShownSession';
+  // =============== Imagen de inicio SOLO al recargar ===============
+  const SPLASH_MS  = 1400; // cuánto dura la imagen de inicio
+  const SPLASH_IMG = 'assets/img/general.png'; // <-- ajusta si usas otro nombre
 
   function isReloadNavigation() {
     try {
-      const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
-      if (nav && nav.type) return nav.type === 'reload';
-      // Fallback legacy
+      const nav = performance.getEntriesByType?.('navigation')?.[0];
+      if (nav?.type) return nav.type === 'reload';
       return performance.navigation && performance.navigation.type === 1;
     } catch { return false; }
   }
 
-  const isReload = isReloadNavigation();
-  const alreadyShownThisSession = sessionStorage.getItem(RELOAD_FLAG) === '1';
-  const showSplashNow = isReload && !alreadyShownThisSession;
+  const showSplashNow = isReloadNavigation();
 
   // Preconfigura el splash lo antes posible
   if (splash) {
     if (showSplashNow) {
-      // Imagen a pantalla completa
       splash.style.background = `#000 url('${SPLASH_IMG}') center/cover no-repeat`;
+      splash.classList.remove('d-none'); // mostrar SOLO en recarga
     } else {
-      // Si NO toca mostrar imagen, ocultamos temprano para evitar parpadeos
-      splash.classList.add('d-none');
+      splash.classList.add('d-none');    // en carga normal, oculto
     }
   }
 
-  // =============== Splash -> Loader -> App ===============
-  // Splash solo PRIMERA vez (conservado por compatibilidad)
-  const FIRST_KEY = 'ui.firstVisitShown';
-
+  // =============== On load ===============
   window.addEventListener('load', () => {
-    // Precarga de imágenes usadas en las cards (evita “parpadeo”)
     preloadCardImages();
 
-    if (splash && loader && app) {
-      if (showSplashNow) {
-        // Mostrar imagen de inicio -> luego loader -> app
-        setTimeout(() => {
-          splash.classList.add('d-none');
-          loader.classList.remove('d-none');
-          setTimeout(() => {
-            loader.classList.add('d-none');
-            app.classList.remove('d-none');
-            // marca que ya se mostró en esta sesión
-            sessionStorage.setItem(RELOAD_FLAG, '1');
-            localStorage.setItem(FIRST_KEY, '1');
-          }, LOADER_MS);
-        }, SPLASH_MS);
-      } else {
-        // Sin imagen de inicio: solo loader breve -> app
+    if (!app) return;
+
+    if (showSplashNow && splash) {
+      // Imagen de inicio -> app
+      setTimeout(() => {
         splash.classList.add('d-none');
-        loader.classList.remove('d-none');
-        setTimeout(() => {
-          loader.classList.add('d-none');
-          app.classList.remove('d-none');
-          localStorage.setItem(FIRST_KEY, '1');
-        }, Math.min(500, LOADER_MS));
-      }
+        app.classList.remove('d-none');
+      }, SPLASH_MS);
+    } else {
+      // Directo a la app (sin loader)
+      splash?.classList.add('d-none');
+      app.classList.remove('d-none');
     }
 
-    // Inicializa previews (lazy al voltear)
+    // Previews en reverso (lazy)
     initCardPreviews();
   });
 
-  // =============== Toggle tema (con persistencia) ===============
+  // =============== Tema (persistente) ===============
   const THEME_KEY = 'ui.theme';
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   function setNavbarTone(theme) {
     if (!navbar) return;
     navbar.classList.remove('navbar-dark', 'navbar-light');
-    if (theme === 'dark') navbar.classList.add('navbar-dark');
-    else navbar.classList.add('navbar-light');
+    navbar.classList.add(theme === 'dark' ? 'navbar-dark' : 'navbar-light');
   }
 
   function setTheme(theme) {
@@ -106,14 +78,12 @@
     localStorage.setItem(THEME_KEY, theme);
     setNavbarTone(theme);
     if (btnTheme) {
-      btnTheme.innerHTML =
-        theme === 'dark'
-          ? '<i class="bi bi-moon-stars"></i>'
-          : '<i class="bi bi-sun"></i>';
+      btnTheme.innerHTML = theme === 'dark'
+        ? '<i class="bi bi-moon-stars"></i>'
+        : '<i class="bi bi-sun"></i>';
     }
   }
 
-  // Inicializa tema (persistente)
   (function initTheme() {
     const saved = localStorage.getItem(THEME_KEY);
     setTheme(saved || (prefersDark ? 'dark' : 'light'));
@@ -126,36 +96,25 @@
 
   // =============== Abrir todas en nuevas pestañas ===============
   on(btnOpenAll, 'click', () => {
-    const urls = [
+    [
       'demos/geometry-minecraft/index.html',
       'demos/controls-orbit/index.html',
       'demos/controls-map/index.html',
       'demos/controls-pointerlock/index.html'
-    ];
-    urls.forEach(u => window.open(u, '_blank'));
+    ].forEach(u => window.open(u, '_blank'));
   });
 
-  // =============== Smooth scroll para anclas internas ===============
+  // =============== Smooth scroll ===============
   $$('a[href^="#"]').forEach(a => {
     on(a, 'click', (e) => {
-      const target = a.getAttribute('href');
-      if (!target || target.length < 2) return;
-      const el = $(target);
+      const id = a.getAttribute('href');
+      if (!id || id.length < 2) return;
+      const el = $(id);
       if (!el) return;
       e.preventDefault();
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
-
-  // =============== Mostrar loader al abrir una demo (mejor UX) ===============
-  function enableLoaderOnCardLinks() {
-    $$('.card-link').forEach(a => {
-      on(a, 'click', () => {
-        if (loader) loader.classList.remove('d-none');
-      });
-    });
-  }
-  enableLoaderOnCardLinks();
 
   // =============== Precarga de imágenes de las cards ===============
   function extractUrlFromBgStyle(styleStr) {
@@ -170,61 +129,46 @@
       const u = extractUrlFromBgStyle(s);
       if (u) urls.add(u);
     });
-    urls.forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
+    urls.forEach(src => { const img = new Image(); img.src = src; });
   }
 
-  // =============== Accesibilidad / Tecla rápida ===============
-  // G → baja a la colección (#coleccion) si existe
+  // =============== Accesibilidad: tecla G ===============
   on(document, 'keydown', (e) => {
     if (e.key.toLowerCase() === 'g') {
       const target = $('#coleccion') || app;
-      if (target) target.scrollIntoView({ behavior: 'smooth' });
+      target?.scrollIntoView({ behavior: 'smooth' });
     }
   });
 
-  // =============== Respeta “prefers-reduced-motion” ===============
+  // =============== Reduced motion ===============
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
   if (reduce.matches) {
     document.body.classList.add('reduce-motion');
     const style = document.createElement('style');
     style.textContent = `
       .flip-card-inner { transition: none !important; }
-      .card-glow:hover {
-        transform: none !important;
-        box-shadow: 0 12px 24px rgba(0,0,0,.35) !important;
-      }
+      .card-glow:hover { transform: none !important; box-shadow: 0 12px 24px rgba(0,0,0,.35) !important; }
       @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
     `;
     document.head.appendChild(style);
   }
 
-  // =============== Loader al abandonar la página (navegación estándar) ===============
-  window.addEventListener('beforeunload', () => {
-    if (loader) loader.classList.remove('d-none');
-  });
-
-  // =============== Vista previa en reverso (lazy) ===============
+  // =============== Previews en reverso (lazy) ===============
   function initCardPreviews() {
     const cards = $$('.flip-card');
-    const opts = { threshold: 0.3 };
-
     const io = ('IntersectionObserver' in window)
       ? new IntersectionObserver((entries) => {
           entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              const back = entry.target;
-              const wrap = back.querySelector('.preview-embed[data-src]');
-              const iframe = wrap?.querySelector('iframe');
-              if (wrap && iframe && !wrap.dataset.loaded) {
-                iframe.src = wrap.dataset.src;
-                wrap.dataset.loaded = '1';
-              }
+            if (!entry.isIntersecting) return;
+            const back = entry.target;
+            const wrap = back.querySelector('.preview-embed[data-src]');
+            const iframe = wrap?.querySelector('iframe');
+            if (wrap && iframe && !wrap.dataset.loaded) {
+              iframe.src = wrap.dataset.src;
+              wrap.dataset.loaded = '1';
             }
           });
-        }, opts)
+        }, { threshold: 0.3 })
       : null;
 
     cards.forEach(card => {
@@ -243,12 +187,12 @@
       card.addEventListener('mouseenter', loadNow, { passive: true });
       card.addEventListener('touchstart', loadNow, { passive: true });
 
-      if (io) io.observe(back);
+      io && io.observe(back);
     });
   }
 })();
 
-// ===== Buscador de demos (filtra por título/subtítulo) =====
+// ===== Buscador =====
 (() => {
   const q = document.getElementById('q');
   if (!q) return;
